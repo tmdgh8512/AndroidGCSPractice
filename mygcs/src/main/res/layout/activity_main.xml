@@ -16,18 +16,16 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/btnconnect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp"
-        android:onClick="onBtnConnectTap"
+        android:onClick="btn_event"
         android:text="connect"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/map"
+        app:layout_constraintStart_toStartOf="@+id/map" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -123,12 +121,28 @@
             android:text="0" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btnArmTakeOff"
+    <LinearLayout
+        android:id="@+id/connectmenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:layout_marginBottom="40dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:onClick="onArmButtonTap"
-        app:layout_constraintStart_toStartOf="@+id/map" />
+        app:layout_constraintStart_toStartOf="@+id/map">
+
+        <Button
+            android:id="@+id/btnarm"
+            android:onClick="btn_event"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="arm" />
+
+        <Button
+            android:id="@+id/btnland"
+            android:onClick="btn_event"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="land" />
+    </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>

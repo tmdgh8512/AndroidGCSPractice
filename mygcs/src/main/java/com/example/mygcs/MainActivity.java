@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +45,7 @@ import com.o3dr.services.android.lib.drone.companion.solo.SoloState;
 import com.o3dr.services.android.lib.drone.connection.ConnectionParameter;
 import com.o3dr.services.android.lib.drone.connection.ConnectionType;
 import com.o3dr.services.android.lib.drone.property.Altitude;
+import com.o3dr.services.android.lib.drone.property.Battery;
 import com.o3dr.services.android.lib.drone.property.Gps;
 import com.o3dr.services.android.lib.drone.property.Home;
 import com.o3dr.services.android.lib.drone.property.Speed;
@@ -56,6 +58,8 @@ import com.o3dr.services.android.lib.model.SimpleCommandListener;
 
 import java.util.List;
 
+import static com.o3dr.services.android.lib.drone.attribute.AttributeType.BATTERY;
+
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, DroneListener, TowerListener, LinkListener {
 
@@ -66,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Drone drone;
     private int droneType = Type.TYPE_UNKNOWN;
     private ControlTower controlTower;
+    private boolean connectDrone = false;
+    private LinearLayout armingbtn ;
     private final Handler handler = new Handler();
     private Spinner modeSelector;
 
@@ -88,6 +94,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (mapFragment == null) {
             mapFragment = MapFragment.newInstance();
             fm.beginTransaction().add(R.id.map, mapFragment).commit();
+        }
+
+        if(!connectDrone) {
+            armingbtn = (LinearLayout)findViewById(R.id.connectmenu) ;
+            armingbtn.setVisibility(View.INVISIBLE);
         }
 
         mapFragment.getMapAsync(this);
@@ -230,16 +241,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             case AttributeEvent.ALTITUDE_UPDATED:
                 updateAltitude();
                 break;
+
             case AttributeEvent.HOME_UPDATED:
                 updateDistanceFromHome();
+                break;
+
+            case AttributeEvent.BATTERY_UPDATED:
+                updateBatteryVolt();
                 break;
 
             default:
                 // Log.i("DRONE_EVENT", event); //Uncomment to see events from the drone
                 break;
         }
-
-
+        
     }
 
     @Override
@@ -247,12 +262,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    public void onBtnConnectTap(View view) {
+    public void onBtnConnectTap() {
         if (this.drone.isConnected()) {
             this.drone.disconnect();
+        } else {
+            ConnectionParameter connectionParams = ConnectionParameter.newUdpConnection(null);
+            this.drone.connect(connectionParams);
         }
     }
 
+    public void btn_event(View v){
+        switch(v.getId()){
+            case R.id.btnconnect:
+                onBtnConnectTap();
+                break;
+            case R.id.btnarm:
+                onArmButtonTap();
+                break;
+            case R.id.btnland:
+                break;
+
+        }
+    }
     @Override
     public void onLinkStateUpdated(@NonNull LinkConnectionStatus connectionStatus) {
         switch(connectionStatus.getStatusCode()){
@@ -306,23 +337,36 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         altitudeTextView.setText(String.format("%3.1f", droneAltitude.getAltitude()) + "m");
     }
 
+    protected void updateBatteryVolt(){
+        TextView voltTextView = (TextView)findViewById(R.id.batteryVoltageValueTextView);
+        Battery droneVolt = this.drone.getAttribute(BATTERY);
+
+        Log.d("MYLOG","볼트의 변화 : "+droneVolt.getBatteryVoltage());
+
+        voltTextView.setText(String.format(" "+droneVolt.getBatteryVoltage()+"V"));
+    }
+
     protected void updateConnectedButton(Boolean isConnected) {
         Button connectButton = (Button) findViewById(R.id.btnconnect);
         if (isConnected) {
             connectButton.setText("Disconnect");
+            connectDrone = false;
+            armingbtn.setVisibility(View.INVISIBLE);
         } else {
             connectButton.setText("Connect");
+            connectDrone = true;
+            armingbtn.setVisibility(View.VISIBLE);
         }
     }
 
     protected void updateArmButton() {
         State vehicleState = this.drone.getAttribute(AttributeType.STATE);
-        Button armButton = (Button) findViewById(R.id.btnArmTakeOff);
+        Button armButton = (Button) findViewById(R.id.btnarm);
 
         if (!this.drone.isConnected()) {
-            armButton.setVisibility(View.INVISIBLE);
+            armingbtn.setVisibility(View.INVISIBLE);
         } else {
-            armButton.setVisibility(View.VISIBLE);
+            armingbtn.setVisibility(View.VISIBLE);
         }
 
         if (vehicleState.isFlying()) {
@@ -362,7 +406,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.modeSelector.setAdapter(vehicleModeArrayAdapter);
     }
 
-    public void onArmButtonTap(View view) {
+    public void onArmButtonTap() {
         State vehicleState = this.drone.getAttribute(AttributeType.STATE);
 
         if (vehicleState.isFlying()) {
