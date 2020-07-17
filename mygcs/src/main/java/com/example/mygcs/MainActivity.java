@@ -257,7 +257,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
 
             case AttributeEvent.GPS_COUNT:
-
+                updateNumberOfSatellites();
+                break;
 
             default:
                 // Log.i("DRONE_EVENT", event); //Uncomment to see events from the drone
@@ -307,7 +308,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-
     protected void alertUser(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
         Log.d(TAG, message);
@@ -349,15 +349,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void updateBatteryVolt(){
         TextView voltTextView = (TextView)findViewById(R.id.batteryVoltageValueTextView);
         Battery droneVolt = this.drone.getAttribute(BATTERY);
-        Log.d("MYLOG","볼트의 변화 : "+droneVolt.getBatteryVoltage());
-        voltTextView.setText(String.format(" "+droneVolt.getBatteryVoltage()+"V"));
+        Log.d("MYLOG","베터리 변화 : " + droneVolt.getBatteryVoltage());
+        voltTextView.setText(String.format(" " + droneVolt.getBatteryVoltage()+"V"));
     }
 
     protected void updateYaw() {
         TextView yawTextView = (TextView)findViewById(R.id.yawValueTextView);
         Attitude droneyaw = this.drone.getAttribute(AttributeType.ATTITUDE);
-        Log.d("MYLOG","yaw" + droneyaw.getYaw());
+        Log.d("MYLOG","yaw : " + droneyaw.getYaw());
         yawTextView.setText(String.format("%3.1f", droneyaw.getYaw()));
+    }
+
+    protected void updateNumberOfSatellites() {
+        TextView numberOfSatellitesTextView = (TextView)findViewById(R.id.numberofSatellitesValueTextView);
+        Gps droneNumberOfSatellites = this.drone.getAttribute(AttributeType.GPS);
+        Log.d("MYLOG", "위성 수 변화 : " + droneNumberOfSatellites.getSatellitesCount());
+        numberOfSatellitesTextView.setText(String.format("%3.1f", droneNumberOfSatellites.getSatellitesCount()));
     }
 
     protected void updateConnectedButton(Boolean isConnected) {
