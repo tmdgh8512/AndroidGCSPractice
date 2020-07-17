@@ -44,6 +44,7 @@ import com.o3dr.services.android.lib.drone.companion.solo.SoloAttributes;
 import com.o3dr.services.android.lib.drone.companion.solo.SoloState;
 import com.o3dr.services.android.lib.drone.connection.ConnectionParameter;
 import com.o3dr.services.android.lib.drone.connection.ConnectionType;
+import com.o3dr.services.android.lib.drone.mission.item.command.YawCondition;
 import com.o3dr.services.android.lib.drone.property.Altitude;
 import com.o3dr.services.android.lib.drone.property.Battery;
 import com.o3dr.services.android.lib.drone.property.Gps;
@@ -51,6 +52,8 @@ import com.o3dr.services.android.lib.drone.property.Home;
 import com.o3dr.services.android.lib.drone.property.Speed;
 import com.o3dr.services.android.lib.drone.property.State;
 import com.o3dr.services.android.lib.drone.property.Type;
+import com.o3dr.services.android.lib.drone.property.DroneAttribute;
+import com.o3dr.services.android.lib.drone.property.Attitude;
 import com.o3dr.services.android.lib.drone.property.VehicleMode;
 import com.o3dr.services.android.lib.gcs.link.LinkConnectionStatus;
 import com.o3dr.services.android.lib.model.AbstractCommandListener;
@@ -59,7 +62,6 @@ import com.o3dr.services.android.lib.model.SimpleCommandListener;
 import java.util.List;
 
 import static com.o3dr.services.android.lib.drone.attribute.AttributeType.BATTERY;
-
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, DroneListener, TowerListener, LinkListener {
 
@@ -250,11 +252,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 updateBatteryVolt();
                 break;
 
+            case AttributeEvent.ATTITUDE_UPDATED:
+                updateYaw();
+                break;
+
+            case AttributeEvent.GPS_COUNT:
+
+
             default:
                 // Log.i("DRONE_EVENT", event); //Uncomment to see events from the drone
                 break;
         }
-        
+
     }
 
     @Override
@@ -340,10 +349,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void updateBatteryVolt(){
         TextView voltTextView = (TextView)findViewById(R.id.batteryVoltageValueTextView);
         Battery droneVolt = this.drone.getAttribute(BATTERY);
-
         Log.d("MYLOG","볼트의 변화 : "+droneVolt.getBatteryVoltage());
-
         voltTextView.setText(String.format(" "+droneVolt.getBatteryVoltage()+"V"));
+    }
+
+    protected void updateYaw() {
+        TextView yawTextView = (TextView)findViewById(R.id.yawValueTextView);
+        Attitude droneyaw = this.drone.getAttribute(AttributeType.ATTITUDE);
+        Log.d("MYLOG","yaw" + droneyaw.getYaw());
+        yawTextView.setText(String.format("%3.1f", droneyaw.getYaw()));
     }
 
     protected void updateConnectedButton(Boolean isConnected) {
