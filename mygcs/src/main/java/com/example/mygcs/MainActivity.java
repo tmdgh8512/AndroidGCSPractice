@@ -357,14 +357,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         TextView yawTextView = (TextView)findViewById(R.id.yawValueTextView);
         Attitude droneyaw = this.drone.getAttribute(AttributeType.ATTITUDE);
         Log.d("MYLOG","yaw : " + droneyaw.getYaw());
-        yawTextView.setText(String.format("%3.1f", droneyaw.getYaw()));
+        yawTextView.setText(String.format("%3.1f", droneyaw.getYaw()) + "deg");
     }
 
     protected void updateNumberOfSatellites() {
         TextView numberOfSatellitesTextView = (TextView)findViewById(R.id.numberofSatellitesValueTextView);
         Gps droneNumberOfSatellites = this.drone.getAttribute(AttributeType.GPS);
         Log.d("MYLOG", "위성 수 변화 : " + droneNumberOfSatellites.getSatellitesCount());
-        numberOfSatellitesTextView.setText(String.format("%3.1f", droneNumberOfSatellites.getSatellitesCount()));
+        numberOfSatellitesTextView.setText(String.format("%d", droneNumberOfSatellites.getSatellitesCount()));
     }
 
     protected void updateConnectedButton(Boolean isConnected) {
