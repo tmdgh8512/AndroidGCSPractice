@@ -132,17 +132,24 @@
 
         <Button
             android:id="@+id/btnarm"
-            android:onClick="btn_event"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="btn_event"
             android:text="arm" />
 
         <Button
             android:id="@+id/btnland"
-            android:onClick="btn_event"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="btn_event"
             android:text="land" />
+
+        <Button
+            android:id="@+id/btnarmtakeoff"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="btn_event"
+            android:text="take-off" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

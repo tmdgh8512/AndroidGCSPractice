@@ -290,6 +290,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 onArmButtonTap();
                 break;
             case R.id.btnland:
+                onArmButtonTap();
+                break;
+            case R.id.btnarmtakeoff:
+                onArmButtonTap();
                 break;
 
         }
@@ -395,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             armButton.setText("LAND");
         } else if (vehicleState.isArmed()) {
             // Take off
-            armButton.setText("TAKE OFF");
+            armButton.setText("TAKE-OFF");
         } else if (vehicleState.isConnected()) {
             // Connected but not Armed
             armButton.setText("ARM");
