@@ -22,9 +22,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.naver.maps.geometry.LatLng;
+import com.naver.maps.map.CameraUpdate;
 import com.naver.maps.map.MapFragment;
 import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
+import com.naver.maps.map.overlay.LocationOverlay;
+import com.naver.maps.map.overlay.OverlayImage;
 import com.o3dr.android.client.ControlTower;
 import com.o3dr.android.client.Drone;
 import com.o3dr.android.client.apis.ControlApi;
@@ -76,6 +80,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LinearLayout armingbtn ;
     private final Handler handler = new Handler();
     private Spinner modeSelector;
+    private LocationOverlay locationOverlay;
+
 
     private MediaCodecManager mediaCodecManager;
 
@@ -133,6 +139,36 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
 
+    //Overlay
+    public void overlay() {
+        try {
+            Gps droneGps = this.drone.getAttribute(AttributeType.GPS);
+            LatLng dronePosition = new LatLng(droneGps.getPosition().getLatitude(),droneGps.getPosition().getLongitude());
+
+            locationOverlay = mymap.getLocationOverlay();
+            locationOverlay.setVisible(true);
+
+            locationOverlay.setBearing(90);
+
+            locationOverlay.setIcon(OverlayImage.fromResource(R.drawable.flight));
+            locationOverlay.setIconWidth(LocationOverlay.SIZE_AUTO);
+            locationOverlay.setIconHeight(LocationOverlay.SIZE_AUTO);
+
+            locationOverlay.setPosition(dronePosition);
+            mymap.moveCamera(CameraUpdate.scrollTo(dronePosition));
+
+        } catch (NullPointerException e) {
+            Log.d("myLog", "getPosition Error : " + e.getMessage());
+            locationOverlay = mymap.getLocationOverlay();
+            locationOverlay.setVisible(true);
+            locationOverlay.setPosition(new LatLng(35.942339, 126.683388));
+            mymap.moveCamera(CameraUpdate.scrollTo(new LatLng(35.945378,126.682110)));
+            locationOverlay.setIcon(OverlayImage.fromResource(R.drawable.flight));
+            locationOverlay.setIconWidth(LocationOverlay.SIZE_AUTO);
+            locationOverlay.setIconHeight(LocationOverlay.SIZE_AUTO);
+        }
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -168,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(@NonNull NaverMap naverMap) {
 
         this.mymap = naverMap;
-        mymap.setMapType(NaverMap.MapType.Satellite);
+        overlay();
 
     }
 
@@ -259,6 +295,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             case AttributeEvent.GPS_COUNT:
                 updateNumberOfSatellites();
                 break;
+
+            case AttributeEvent.GPS_POSITION:
+                overlay();
+                break;
+
 
             default:
                 // Log.i("DRONE_EVENT", event); //Uncomment to see events from the drone
@@ -358,10 +399,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     protected void updateYaw() {
+        double yawvalue=0;
         TextView yawTextView = (TextView)findViewById(R.id.yawValueTextView);
         Attitude droneyaw = this.drone.getAttribute(AttributeType.ATTITUDE);
-        Log.d("MYLOG","yaw : " + droneyaw.getYaw());
-        yawTextView.setText(String.format("%3.1f", droneyaw.getYaw()) + "deg");
+        if(droneyaw.getYaw()<0)
+            yawvalue = droneyaw.getYaw()+360;
+        else
+            yawvalue = droneyaw.getYaw();
+        yawTextView.setText(String.format("%3.1f",yawvalue) + "deg");
+        locationOverlay.setBearing((float) droneyaw.getYaw());
+
     }
 
     protected void updateNumberOfSatellites() {

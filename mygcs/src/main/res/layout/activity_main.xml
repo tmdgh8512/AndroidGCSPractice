@@ -31,7 +31,7 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:background="#88ff0000"
+        android:background="#444444"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="@+id/map"
         app:layout_constraintStart_toStartOf="@+id/map"
@@ -42,21 +42,24 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="전압 :" />
+            android:text="전압 :"
+            android:textColor="#ffffff"/>
 
         <TextView
             android:id="@+id/batteryVoltageValueTextView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="0v" />
+            android:text="0v"
+            android:textColor="#ffffff"/>
 
         <TextView
             android:id="@+id/flightModeSelectorLabelTextView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="비행모드 :" />
+            android:text="비행모드 :"
+            android:textColor="#ffffff"/>
 
         <Spinner
             android:id="@+id/flightModeSelectorSpinner"
@@ -69,56 +72,64 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="고도 :" />
+            android:text="고도 :"
+            android:textColor="#ffffff"/>
 
         <TextView
             android:id="@+id/altitudeValueTextView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="0m" />
+            android:text="0m"
+            android:textColor="#ffffff"/>
 
         <TextView
             android:id="@+id/speedLableTextView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="속도 :" />
+            android:text="속도 :"
+            android:textColor="#ffffff"/>
 
         <TextView
             android:id="@+id/speedValueTextView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="0m/s" />
+            android:text="0m/s"
+            android:textColor="#ffffff"/>
 
         <TextView
             android:id="@+id/yawLabelTextView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="YAW :" />
+            android:text="YAW :"
+            android:textColor="#ffffff"/>
 
         <TextView
             android:id="@+id/yawValueTextView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="0deg" />
+            android:text="0deg"
+            android:textColor="#ffffff"/>
 
         <TextView
             android:id="@+id/numberofSatellitesLabelTextView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="위성 수 :" />
+            android:text="위성 수 :"
+            android:textColor="#ffffff"/>
 
         <TextView
             android:id="@+id/numberofSatellitesValueTextView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="0" />
+            android:text="0"
+            android:textColor="#ffffff"/>
     </LinearLayout>
 
     <LinearLayout
