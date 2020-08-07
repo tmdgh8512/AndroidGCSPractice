@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private final Handler handler = new Handler();
     private Spinner modeSelector;
     private LocationOverlay locationOverlay;
-
+    private double droneAltitude = 5.5;
 
     private MediaCodecManager mediaCodecManager;
 
@@ -148,8 +148,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             locationOverlay = mymap.getLocationOverlay();
             locationOverlay.setVisible(true);
 
-            locationOverlay.setBearing(90);
-
             locationOverlay.setIcon(OverlayImage.fromResource(R.drawable.flight));
             locationOverlay.setIconWidth(LocationOverlay.SIZE_AUTO);
             locationOverlay.setIconHeight(LocationOverlay.SIZE_AUTO);
@@ -161,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Log.d("myLog", "getPosition Error : " + e.getMessage());
             locationOverlay = mymap.getLocationOverlay();
             locationOverlay.setVisible(true);
-            locationOverlay.setPosition(new LatLng(35.942339, 126.683388));
+            locationOverlay.setPosition(new LatLng(35.945378,126.682110));
             mymap.moveCamera(CameraUpdate.scrollTo(new LatLng(35.945378,126.682110)));
             locationOverlay.setIcon(OverlayImage.fromResource(R.drawable.flight));
             locationOverlay.setIconWidth(LocationOverlay.SIZE_AUTO);
@@ -246,6 +244,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 alertUser("Drone Connected");
                 updateConnectedButton(this.drone.isConnected());
                 updateArmButton();
+                updateTakeOffAltitudeButton();
                 checkSoloState();
                 break;
 
@@ -253,11 +252,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 alertUser("Drone Disconnected");
                 updateConnectedButton(this.drone.isConnected());
                 updateArmButton();
+                updateTakeOffAltitudeButton();
                 break;
 
             case AttributeEvent.STATE_UPDATED:
             case AttributeEvent.STATE_ARMING:
                 updateArmButton();
+                updateTakeOffAltitudeButton();
                 break;
 
             case AttributeEvent.TYPE_UPDATED:
@@ -331,10 +332,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 onArmButtonTap();
                 break;
             case R.id.btnland:
-                onArmButtonTap();
+                onLandButtonTap();
                 break;
             case R.id.btnarmtakeoff:
                 onArmButtonTap();
+            case R.id.btnTakeoffAltitude:
+                takeoffsetButtonTap();
+                break;
+            case R.id.btnUpAltitude:
+                onUpAltitudeButtonTap();
+                break;
+            case R.id.btnDownAltitude:
+                onDownAltitudeButtonTap();
                 break;
 
         }
@@ -453,6 +462,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    protected void updateTakeOffAltitudeButton() {
+        Button takeOffAltitudeButton = (Button) findViewById(R.id.btnTakeoffAltitude);
+        TextView altitudeTextView = (TextView) findViewById(R.id.btnTakeoffAltitude);
+
+        if (!this.drone.isConnected()) {
+            takeOffAltitudeButton.setVisibility(View.INVISIBLE);
+            altitudeTextView.setText(String.format("%1.1f"+"M\n이륙고도", droneAltitude));
+        } else {
+            takeOffAltitudeButton.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void checkSoloState() {
         final SoloState soloState = drone.getAttribute(SoloAttributes.SOLO_STATE);
         if (soloState == null){
@@ -496,7 +517,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             });
         } else if (vehicleState.isArmed()) {
             // Take off
-            ControlApi.getApi(this.drone).takeoff(10, new AbstractCommandListener() {
+            ControlApi.getApi(this.drone).takeoff(droneAltitude, new AbstractCommandListener() {
 
                 @Override
                 public void onSuccess() {
@@ -531,4 +552,61 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             });
         }
     }
+
+    public void onLandButtonTap() {
+        State vehicleState = this.drone.getAttribute(AttributeType.STATE);
+
+        if (vehicleState.isFlying()) {
+            // Land
+            VehicleApi.getApi(this.drone).setVehicleMode(VehicleMode.COPTER_LAND, new SimpleCommandListener() {
+                @Override
+                public void onError(int executionError) {
+                    alertUser("Unable to land the vehicle.");
+                }
+
+                @Override
+                public void onTimeout() {
+                    alertUser("Unable to land the vehicle.");
+                }
+            });
+        }
+    }
+
+    public void takeoffsetButtonTap() {
+        Button upAltitudeButton = (Button) findViewById(R.id.btnUpAltitude);
+        Button downAltitudeButton = (Button) findViewById(R.id.btnDownAltitude);
+
+        if (upAltitudeButton.getVisibility() == View.INVISIBLE) {
+            upAltitudeButton.setVisibility(View.VISIBLE);
+            downAltitudeButton.setVisibility(View.VISIBLE);
+        } else {
+            upAltitudeButton.setVisibility(View.INVISIBLE);
+            downAltitudeButton.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public void onUpAltitudeButtonTap() {
+        TextView upAltitudeValue = (TextView) findViewById(R.id.btnTakeoffAltitude);
+
+        if (droneAltitude <= 9.5) {
+            droneAltitude += 0.5;
+            upAltitudeValue.setText(String.format("%1.1f"+"M\n이륙고도", droneAltitude));
+        } else if (droneAltitude >= 10.0) {
+            Toast.makeText(getApplicationContext(),"고도 10m초과 설정 불가", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void onDownAltitudeButtonTap() {
+        TextView downAltitudeValue = (TextView) findViewById(R.id.btnTakeoffAltitude);
+
+        if (droneAltitude >= 3.5) {
+            droneAltitude -= 0.5;
+            downAltitudeValue.setText(String.format("%1.1f"+"M\n이륙고도", droneAltitude));
+        } else if (droneAltitude <= 3.5) {
+            Toast.makeText(getApplicationContext(),"고도 3m미만 설정 불가", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
 }

@@ -43,7 +43,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="전압 :"
-            android:textColor="#ffffff"/>
+            android:textColor="#ffffff" />
 
         <TextView
             android:id="@+id/batteryVoltageValueTextView"
@@ -51,7 +51,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="0v"
-            android:textColor="#ffffff"/>
+            android:textColor="#ffffff" />
 
         <TextView
             android:id="@+id/flightModeSelectorLabelTextView"
@@ -59,7 +59,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="비행모드 :"
-            android:textColor="#ffffff"/>
+            android:textColor="#ffffff" />
 
         <Spinner
             android:id="@+id/flightModeSelectorSpinner"
@@ -73,7 +73,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="고도 :"
-            android:textColor="#ffffff"/>
+            android:textColor="#ffffff" />
 
         <TextView
             android:id="@+id/altitudeValueTextView"
@@ -81,7 +81,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="0m"
-            android:textColor="#ffffff"/>
+            android:textColor="#ffffff" />
 
         <TextView
             android:id="@+id/speedLableTextView"
@@ -89,7 +89,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="속도 :"
-            android:textColor="#ffffff"/>
+            android:textColor="#ffffff" />
 
         <TextView
             android:id="@+id/speedValueTextView"
@@ -97,7 +97,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="0m/s"
-            android:textColor="#ffffff"/>
+            android:textColor="#ffffff" />
 
         <TextView
             android:id="@+id/yawLabelTextView"
@@ -105,7 +105,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="YAW :"
-            android:textColor="#ffffff"/>
+            android:textColor="#ffffff" />
 
         <TextView
             android:id="@+id/yawValueTextView"
@@ -113,7 +113,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="0deg"
-            android:textColor="#ffffff"/>
+            android:textColor="#ffffff" />
 
         <TextView
             android:id="@+id/numberofSatellitesLabelTextView"
@@ -121,7 +121,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="위성 수 :"
-            android:textColor="#ffffff"/>
+            android:textColor="#ffffff" />
 
         <TextView
             android:id="@+id/numberofSatellitesValueTextView"
@@ -129,7 +129,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="0"
-            android:textColor="#ffffff"/>
+            android:textColor="#ffffff" />
     </LinearLayout>
 
     <LinearLayout
@@ -162,5 +162,44 @@
             android:onClick="btn_event"
             android:text="take-off" />
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/takeoffsetmenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:orientation="vertical"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnTakeoffAltitude">
+
+        <Button
+            android:id="@+id/btnUpAltitude"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:onClick="btn_event"
+            android:text="+0.5"
+            android:textSize="12dp" />
+
+        <Button
+            android:id="@+id/btnDownAltitude"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:onClick="btn_event"
+            android:text="-0.5"
+            android:textSize="12dp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnTakeoffAltitude"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:onClick="btn_event"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:text="5.5m\n이륙고도"
+        android:textSize="12dp"
+        app:layout_constraintEnd_toEndOf="@+id/map"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
 </android.support.constraint.ConstraintLayout>
