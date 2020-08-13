@@ -2,6 +2,7 @@ package com.example.mygcs;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.graphics.PointF;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.os.Handler;
@@ -82,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Spinner modeSelector;
     private LocationOverlay locationOverlay;
     private double droneAltitude = 5.5;
+    private GuideMode guideMode;
+    private boolean dronestate = false;
 
     private MediaCodecManager mediaCodecManager;
 
@@ -202,6 +205,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(@NonNull NaverMap naverMap) {
 
         this.mymap = naverMap;
+        mymap.setOnMapLongClickListener((PointF point, LatLng latLng) -> {
+            droneGuideMode(latLng);
+        });
         overlay();
 
     }
@@ -256,9 +262,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
 
             case AttributeEvent.STATE_UPDATED:
+                break;
             case AttributeEvent.STATE_ARMING:
                 updateArmButton();
                 updateTakeOffAltitudeButton();
+                dronestate = mydronestate();
                 break;
 
             case AttributeEvent.TYPE_UPDATED:
@@ -299,6 +307,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             case AttributeEvent.GPS_POSITION:
                 overlay();
+                delMarker();
                 break;
 
 
@@ -607,6 +616,49 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+ //guide mode
 
+    public boolean mydronestate(){
+        State vehiclestate = this.drone.getAttribute(AttributeType.STATE);
+        if(vehiclestate.isFlying())
+            return true;
+        else
+            return false;
+    }
 
+    public void droneGuideMode(LatLng latLng) {
+        if (dronestate) {
+            guideMode.mGuidedPoint = latLng;
+            guideMode.mMarkerGuide.setPosition(latLng);
+            guideMode.mMarkerGuide.setMap(mymap);
+            guideMode.DialogSimple(this.drone, new LatLong(latLng.latitude, latLng.longitude));
+        }
+    }
+
+    public void delMarker(){
+        try{
+            if(guideMode.CheckGoal(this.drone,guideMode.mGuidedPoint))
+            {
+                guideMode.mMarkerGuide.setMap(null);
+                VehicleApi.getApi(this.drone).setVehicleMode(VehicleMode.COPTER_LOITER, new AbstractCommandListener() {
+                    @Override
+                    public void onSuccess() {
+                        alertUser("현재고도를 유지하며 이동합니다.");
+                    }
+
+                    @Override
+                    public void onError(int executionError) {
+                        alertUser("이동 할 수 없습니다.");
+                    }
+
+                    @Override
+                    public void onTimeout() {
+                        alertUser("시간 초과입니다.");
+                    }
+                });
+            }
+        }catch(NullPointerException e){
+            Log.d("NONMARKER","no marker exist");
+        }
+    }
 }

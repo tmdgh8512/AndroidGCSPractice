@@ -2,6 +2,7 @@ package com.example.mygcs;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.support.v7.app.AppCompatActivity;
 
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.overlay.Marker;
@@ -15,20 +16,20 @@ import com.o3dr.services.android.lib.drone.property.GuidedState;
 import com.o3dr.services.android.lib.drone.property.VehicleMode;
 import com.o3dr.services.android.lib.model.AbstractCommandListener;
 
-public class GuideMode {
+public class GuideMode extends AppCompatActivity {
 
-    static LatLng mGuidedPoint; //가이드모드 목적지 저장
-    static Marker mMarkerGuide = new com.naver.maps.map.overlay.Marker(); //GCS 위치 표시
+    LatLng mGuidedPoint; //가이드모드 목적지 저장
+    Marker mMarkerGuide = new com.naver.maps.map.overlay.Marker(); //GCS 위치 표시
     // 마커 옵션
-    static OverlayImage guideIcon = OverlayImage.fromResource(R.drawable.marker_guide);
+    OverlayImage guideIcon = OverlayImage.fromResource(R.drawable.marker_guide);
 
-    static MainActivity mainActivity;
+    private MainActivity mainActivity;
 
-    public void GuideMode(MainActivity mainActivity) {
+    public GuideMode(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
     }
 
-    static void DialogSimple(final Drone drone, final LatLong point) {
+    public void DialogSimple(final Drone drone, final LatLong point) {
         AlertDialog.Builder alt_bld = new AlertDialog.Builder(mainActivity.getApplicationContext());
         alt_bld.setMessage("확인하시면 가이드모드로 전환후 기체가 이동합니다.").setCancelable(false).setPositiveButton("확인", new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int id) {
@@ -38,16 +39,17 @@ public class GuideMode {
                         @Override
 
                         public void onSuccess() {
-
                             ControlApi.getApi(drone).goTo(point, true, null);
+                            mainActivity.alertUser("Success");
                         }
                         @Override
 
                         public void onError(int i) {
-
+                            mainActivity.alertUser("Error");
                         }
                         @Override
                         public void onTimeout() {
+                            mainActivity.alertUser("Timeout(잠시중단)");
                         }
                     });
             }
