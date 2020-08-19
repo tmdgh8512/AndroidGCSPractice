@@ -92,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GuideMode guide;
     private ArrayList<LatLng> pathcoords = new ArrayList<>();
     PolylineOverlay dronePath = new PolylineOverlay();
-    private boolean dronestate = false;
 
     private MediaCodecManager mediaCodecManager;
 
@@ -278,7 +277,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             case AttributeEvent.STATE_ARMING:
                 updateArmButton();
                 updateTakeOffAltitudeButton();
-                dronestate = mydronestate();
                 break;
 
             case AttributeEvent.TYPE_UPDATED:
@@ -631,7 +629,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
  //guide mode
 
     private void runGuideMode(LatLng latLng) {
-                if (dronestate) {
+                if (mydronestate()) {
                         guide.mGuidedPoint = latLng;
                         guide.mMarkerGuide.setPosition(latLng);
                         guide.mMarkerGuide.setMap(mymap);
