@@ -15,7 +15,7 @@ import com.o3dr.services.android.lib.drone.attribute.AttributeType;
 import com.o3dr.services.android.lib.drone.property.GuidedState;
 import com.o3dr.services.android.lib.drone.property.VehicleMode;
 import com.o3dr.services.android.lib.model.AbstractCommandListener;
-
+/*
 public class GuideMode extends AppCompatActivity {
 
     LatLng mGuidedPoint; //가이드모드 목적지 저장
@@ -67,9 +67,8 @@ public class GuideMode extends AppCompatActivity {
     }
     public static boolean CheckGoal(final Drone drone, LatLng recentLatLng) {
         GuidedState guidedState = drone.getAttribute(AttributeType.GUIDED_STATE);
-        LatLng target = new LatLng(guidedState.getCoordinate().getLatitude(),
-                guidedState.getCoordinate().getLongitude());
+        LatLng target = new LatLng(guidedState.getCoordinate().getLatitude(), guidedState.getCoordinate().getLongitude());
         return target.distanceTo(recentLatLng) <= 1;
     }
 }
-
+*/
